@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/*.log
+
+# Local database
+database/*.duckdb
+
+# Raw and processed data
+data/raw/*
+data/staging/*
+data/processed/*
+
+# Keep folders
+!data/raw/.gitkeep
+!data/staging/.gitkeep
+!data/processed/.gitkeep
+
+# Environment
+.env
