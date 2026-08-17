@@ -13,6 +13,13 @@ logger = get_logger(__name__)
 def download_candidates() -> Path:
 
     destination = RAW_DIR / "consulta_cand_2026.zip"
+    
+    if destination.exists():
+        logger.info(
+            "Candidates dataset already exists: %s",
+            destination
+        )
+        return destination
 
     logger.info("Downloading TSE candidates dataset")
 
@@ -35,6 +42,13 @@ def download_candidates() -> Path:
 def extract_candidates_zip(zip_path: Path) -> Path:
 
     extract_dir = RAW_DIR / "candidates_2026"
+    
+    if extract_dir.exists() and any(extract_dir.iterdir()):
+        logger.info(
+            "Candidates dataset already extracted: %s",
+            extract_dir
+        )
+        return extract_dir
 
     extract_dir.mkdir(
         parents=True,
