@@ -10,6 +10,7 @@ from src.transform.candidates import (
 
 from src.validate.candidates import (
     validate_transformed_candidates,
+    validate_candidates_analytics,
 )
 
 from src.load.candidates import (
@@ -17,12 +18,17 @@ from src.load.candidates import (
     load_candidates_duckdb
 )
 
-#from src.validate.database import (
-#    validate_candidates_duckdb,
-#)
-
 from src.validate.pipeline import (
     validate_candidates_pipeline,
+)
+
+from src.analytics.candidates import (
+    build_candidates_analytics,
+)
+
+from src.load.candidates import (
+    save_candidates_analytics,
+    load_candidates_analytics_duckdb,
 )
 
 def main():
@@ -57,6 +63,26 @@ def main():
         df_candidates,
         parquet_path,
         )
+    
+    df_candidates_analytics = (
+    build_candidates_analytics(
+        df_candidates
+    )
+    )
+
+    analytics_path = (
+        save_candidates_analytics(
+            df_candidates_analytics
+        )
+    )
+
+    load_candidates_analytics_duckdb(
+        analytics_path
+    )
+    
+    validate_candidates_analytics(
+        df_candidates_analytics
+    )
     
 
 

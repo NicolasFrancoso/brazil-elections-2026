@@ -218,3 +218,41 @@ def _validation_federation(
         raise ValueError(
             f"Found {inconsistent.sum()} inconsistent federation records"
         )
+        
+        
+def validate_candidates_analytics(
+    df: pd.DataFrame
+    ) -> None:
+
+    logger.info(
+        "Validating candidates analytics dataset"
+    )
+
+    if df.empty:
+        raise ValueError(
+            "Candidates analytics dataset is empty"
+        )
+
+    if df[
+        ["CD_ELEICAO", "SQ_CANDIDATO"]
+    ].isna().any().any():
+        raise ValueError(
+            "Candidates analytics key contains null values"
+        )
+
+    duplicated_keys = df.duplicated(
+        subset=[
+            "CD_ELEICAO",
+            "SQ_CANDIDATO",
+        ]
+    ).sum()
+
+    if duplicated_keys > 0:
+        raise ValueError(
+            f"Candidates analytics contains "
+            f"{duplicated_keys} duplicated keys"
+        )
+
+    logger.info(
+        "Candidates analytics dataset validated successfully"
+    )
