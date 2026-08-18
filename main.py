@@ -17,6 +17,14 @@ from src.load.candidates import (
     load_candidates_duckdb
 )
 
+#from src.validate.database import (
+#    validate_candidates_duckdb,
+#)
+
+from src.validate.pipeline import (
+    validate_candidates_pipeline,
+)
+
 def main():
 
     create_directories()
@@ -45,7 +53,10 @@ def main():
         parquet_path
     )
     
-    
+    validate_candidates_pipeline(
+        df_candidates,
+        parquet_path,
+        )
     
 
 
