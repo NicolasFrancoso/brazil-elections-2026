@@ -3,8 +3,14 @@ from src.extract.candidates import (
     download_candidates,
     extract_candidates_zip,
 )
-from src.transform.candidates import load_candidates_raw
-from src.validate.candidates import profile_candidates
+from src.transform.candidates import (
+    load_candidates_raw,
+    transform_candidates,
+)
+
+from src.validate.candidates import (
+    validate_transformed_candidates,
+)
 
 def main():
 
@@ -14,9 +20,15 @@ def main():
 
     extract_candidates_zip(zip_path)
     
-    df_candidates = load_candidates_raw()
+    df_candidates_raw = load_candidates_raw()
 
-    profile_candidates(df_candidates)
+    df_candidates = transform_candidates(
+        df_candidates_raw
+    )
+    
+    validate_transformed_candidates(
+        df_candidates
+    )
 
 
 if __name__ == "__main__":
