@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from config import RAW_DIR
 from src.utils.logger import get_logger
@@ -181,6 +182,76 @@ def _drop_non_analytical_columns(
 
     return df
 
+def _create_age_group(
+    df: pd.DataFrame
+    ) -> pd.DataFrame:
+
+    bins = [
+        18,
+        29,
+        39,
+        49,
+        59,
+        69,
+        120,
+    ]
+
+    labels = [
+        "18-29",
+        "30-39",
+        "40-49",
+        "50-59",
+        "60-69",
+        "70+",
+    ]
+
+    df["FAIXA_ETARIA"] = pd.cut(
+        df["IDADE_NA_ELEICAO"],
+        bins=bins,
+        labels=labels,
+        include_lowest=True,
+    )
+
+    return df
+
+def _create_key_age_group(
+    df: pd.DataFrame
+    ) -> pd.DataFrame:
+
+    labels = [
+        "18-29",
+        "30-39",
+        "40-49",
+        "50-59",
+        "60-69",
+        "70+",
+    ]
+
+    age_group = df["FAIXA_ETARIA"]
+
+    condlist = [
+    age_group == labels[0],   # Condition 1
+    age_group == labels[1],
+    age_group == labels[2],
+    age_group == labels[3],
+    age_group == labels[4],
+    age_group == labels[5]
+]
+
+    # Define corresponding outcomes
+    choicelist = [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+    ]
+
+    df["FAIXA_ETARIA_KEY"] = np.select(condlist, choicelist, default=6)
+
+    return df
+
 def transform_candidates(df: pd.DataFrame) -> pd.DataFrame:
 
     logger.info("Transforming candidates dataset")
@@ -192,6 +263,8 @@ def transform_candidates(df: pd.DataFrame) -> pd.DataFrame:
     df = _convert_dates(df)
     df = _create_derived_columns(df)
     df = _drop_non_analytical_columns(df)
+    df = _create_age_group(df)
+    df = _create_key_age_group(df)
 
     logger.info(
         "Candidates dataset transformed: %s rows, %s columns",

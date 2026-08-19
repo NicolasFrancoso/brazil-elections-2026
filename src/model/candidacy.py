@@ -58,6 +58,8 @@ def build_dim_candidacy(
 
         "SG_UF_NASCIMENTO",
         "IDADE_NA_ELEICAO",
+        "FAIXA_ETARIA",
+        "FAIXA_ETARIA_KEY",
 
         "CD_GENERO",
         "DS_GENERO",

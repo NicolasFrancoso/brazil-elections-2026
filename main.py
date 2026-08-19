@@ -40,6 +40,13 @@ from src.validate.model import (
     validate_dimensions,
 )
 
+from src.load.model import (
+    persist_dimensions,
+)
+from src.validate.persistence import (
+    validate_dimension_persistence,
+)
+
 
 def main():
 
@@ -180,6 +187,27 @@ def main():
         dim_election,
         dim_location,
         dim_candidacy,
+        )
+
+    dimensions = {
+        "dim_party": dim_party,
+        "dim_office": dim_office,
+        "dim_election": dim_election,
+        "dim_location": dim_location,
+        "dim_candidacy": dim_candidacy,
+        }
+
+    dimension_paths = persist_dimensions(
+        dimensions
+        )
+
+    for table_name, df in dimensions.items():
+        validate_dimension_persistence(
+            df=df,
+            parquet_path=dimension_paths[
+                table_name
+            ],
+            table_name=table_name,
         )
 
 
