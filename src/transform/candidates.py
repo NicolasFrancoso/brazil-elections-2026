@@ -29,14 +29,19 @@ DROP_COLUMNS = [
 
 
 
-def load_candidates_raw() -> pd.DataFrame:
+def load_candidates_raw(
+        snapshot_dir,
+    ) -> pd.DataFrame:
     file_path = (
-        RAW_DIR
-        / "candidates_2026"
+        snapshot_dir
+        / "extracted"
         / "consulta_cand_2026_BRASIL.csv"
     )
 
-    logger.info("Loading raw candidates dataset")
+    logger.info(
+        "Loading raw candidates dataset: %s",
+        file_path,
+    )
 
     df = pd.read_csv(
         file_path,
@@ -60,26 +65,26 @@ def load_candidates_raw() -> pd.DataFrame:
 def _create_business_flags(
     df: pd.DataFrame
 ) -> pd.DataFrame:
-    
+
     df["TEM_NOME_SOCIAL"] = (
         df["NM_SOCIAL_CANDIDATO"] != "#NULO"
     )
-    
+
     df["TEM_FEDERACAO"] = (
         df["NM_FEDERACAO"] != "#NULO"
     )
-    
+
     return df
 
 def _replace_special_text_values(
     df: pd.DataFrame
 ) -> pd.DataFrame:
-    
+
     df = df.replace(
         TEXT_NULL_VALUES,
         pd.NA,
     )
-    
+
     return df
 
 def _convert_dates(
@@ -99,18 +104,18 @@ def _convert_dates(
 def _create_candidate_name(
     df: pd.DataFrame
 ) -> pd.DataFrame:
-    
+
     df["NOME_CANDIDATO"] = (
         df["NM_SOCIAL_CANDIDATO"]
         .fillna(df["NM_CANDIDATO"])
     )
-    
+
     return df
 
 def _create_snapshot_datetime(
     df: pd.DataFrame
 ) -> pd.DataFrame:
-    
+
     df["SNAPSHOT_DATETIME"] = pd.to_datetime(
         (
             df["DT_GERACAO"].dt.strftime("%Y-%m-%d")
@@ -119,21 +124,21 @@ def _create_snapshot_datetime(
         ),
         errors="coerce",
     )
-    
+
     return df
 
 def _create_age_at_election(
     df: pd.DataFrame
 ) -> pd.DataFrame:
-    
+
     election_date = df["DT_ELEICAO"]
     birth_date = df["DT_NASCIMENTO"]
-    
+
     age = (
         election_date.dt.year
         - birth_date.dt.year
     )
-    
+
     has_not_had_birthday = (
         (election_date.dt.month < birth_date.dt.month)
         |
@@ -143,57 +148,57 @@ def _create_age_at_election(
             (election_date.dt.day < birth_date.dt.day)
         )
     )
-    
+
     df["IDADE_NA_ELEICAO"] = (
         age - has_not_had_birthday.astype("Int64")
     )
-    
+
     return df
 
 def _create_derived_columns(
     df:pd.DataFrame
 ) -> pd.DataFrame:
-    
+
     df = _create_candidate_name(df)
     df = _create_snapshot_datetime(df)
     df = _create_age_at_election(df)
-    
+
     return df
 
 def _drop_non_analytical_columns(
     df: pd.DataFrame
 ) -> pd.DataFrame:
-    
+
     columns_to_drop = [
         column
         for column in DROP_COLUMNS
         if column in df.columns
     ]
-    
+
     df = df.drop(
         columns=columns_to_drop
     )
-    
+
     return df
 
 def transform_candidates(df: pd.DataFrame) -> pd.DataFrame:
-    
+
     logger.info("Transforming candidates dataset")
-    
+
     df = df.copy()
-    
+
     df = _create_business_flags(df)
     df = _replace_special_text_values(df)
     df = _convert_dates(df)
     df = _create_derived_columns(df)
     df = _drop_non_analytical_columns(df)
-    
+
     logger.info(
         "Candidates dataset transformed: %s rows, %s columns",
         df.shape[0],
         df.shape[1],
     )
-    
-    return df 
+
+    return df
 
 

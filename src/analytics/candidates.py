@@ -9,6 +9,7 @@ logger = get_logger(__name__)
 ANALYTICS_COLUMNS = [
     "CD_ELEICAO",
     "SQ_CANDIDATO",
+    "DS_ELEICAO",
     "ANO_ELEICAO",
     "NR_TURNO",
     "DT_ELEICAO",
@@ -19,6 +20,8 @@ ANALYTICS_COLUMNS = [
 
     "CD_CARGO",
     "DS_CARGO",
+
+    "TP_ABRANGENCIA",
 
     "NR_CANDIDATO",
     "NM_CANDIDATO",

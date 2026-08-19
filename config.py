@@ -5,6 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 DATA_DIR = BASE_DIR / "data"
 RAW_DIR = DATA_DIR / "raw"
+CANDIDATES_RAW_DIR = RAW_DIR / "candidates"
 STAGING_DIR = DATA_DIR / "staging"
 PROCESSED_DIR = DATA_DIR / "processed"
 
@@ -25,6 +26,7 @@ DIRECTORIES = [
     PROCESSED_DIR,
     DATABASE_DIR,
     LOG_DIR,
+    CANDIDATES_RAW_DIR,
 ]
 
 def create_directories():
